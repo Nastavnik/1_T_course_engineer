@@ -1,0 +1,20 @@
+version: '2.0'
+services:
+  sql_sales:
+    image: postgres:latest # образ postgres
+    container_name: sales_test1 #имя котейнера
+    ports: 
+      - 5499:5432
+    environment: # параметры db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres_db1
+    volumes: # volumes
+      - ./sql/ddl/sales_ddl.sql:/docker-entrypoint-initdb.d/sales_ddl.sql
+      - ./sql/dml/sales_dml.sql:/docker-entrypoint-initdb.d/sales_dml.sql
+      - ./sql/mart.sql:/docker-entrypoint-initdb.d/mart.sql
+    healthcheck: # test
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 8s
+      retries: 5
+    restart: always
